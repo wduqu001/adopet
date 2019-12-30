@@ -1,6 +1,12 @@
 import Axios from "axios";
 
-import { API_BASE_URL, SESSION_REQUEST, SESION_REGISTER, TEST_USER_EMAIL, TEST_USER_PASSWD } from "./config";
+import { 
+  API_BASE_URL,
+  SESSION_REQUEST,
+  SESION_REGISTER,
+  TEST_USER_EMAIL,
+  TEST_USER_PASSWD
+} from "./config";
 import { sessionRegistration, headersConfig } from "./Types";
 
 export async function authenticate(apiKey: string): Promise<string | null> {
@@ -16,10 +22,7 @@ export async function authenticate(apiKey: string): Promise<string | null> {
 
 export async function requestSession(apiKey: string): Promise<string> {
     const url = API_BASE_URL + SESSION_REQUEST;
-    const response = await Axios.post(
-      url,
-      { system_api_key: apiKey }
-    );
+    const response = await Axios.post(url, { system_api_key: apiKey });
     return response.data.data.access_key;
   }
 
@@ -35,10 +38,6 @@ export async function registerSession(tempKey: string): Promise<string> {
       headers: { Authorization: "Bearer " + tempKey }
     };
 
-    const response = await Axios.post(
-      url,
-      userAuth,
-      requestHeader
-    );
+    const response = await Axios.post(url, userAuth, requestHeader);
     return response.data.data.access_key;
   }
