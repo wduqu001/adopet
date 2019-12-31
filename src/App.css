@@ -18,11 +18,11 @@
 .app-content > div {
   padding: 24px;
   background: #fff;
-  height: 78vh;
+  min-height: 78vh;
 }
 
 .logo {
-  margin: 24px;
+  margin: 36px 24px 24px;
   width: 130px;
   height: 102px;
   pointer-events: none;
@@ -36,6 +36,7 @@
 }
 
 .collapse-btn {
-  margin-top: 80vh;
+  margin-top: 7vh;
   padding: 0 8px;
+  z-index: 100;
 }

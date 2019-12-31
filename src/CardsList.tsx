@@ -5,6 +5,7 @@ import Meta from "antd/lib/card/Meta";
 const CardsList: React.FC<any> = ({ data }: any) => {
 
   const petSizes: Record<string, string> = {
+    XS: "Petite",
     S: "Small",
     M:"Medium",
     L: "Large",
@@ -14,9 +15,9 @@ const CardsList: React.FC<any> = ({ data }: any) => {
   return (
     <List
     grid={{
-      gutter: 5,
+      gutter: 8,
       xs: 1,
-      sm: 2,
+      sm: 1,
       md: 2,
       lg: 2,
       xl: 3,
@@ -42,9 +43,9 @@ const CardsList: React.FC<any> = ({ data }: any) => {
         >
           <Meta 
             description={
-              `${pet.name} is a special ${pet.specie.name.toLowerCase()} ${pet.age_key.toLowerCase()} 
-              ${pet.sex_key.toLowerCase()} of ${petSizes[pet.size_key].toLowerCase()} size. 
-              ${pet.sex_key === 'MALE' ? 'He' : 'She'} can be yours for the small price of $${pet.price}`
+              `${pet.name} is a special ${pet.age_key.toLowerCase()} ${pet.specie.name.toLowerCase()}  
+              ${pet.sex_key.toLowerCase()} of ${petSizes[pet.size_key]?.toLowerCase()} size. 
+              ${pet.sex_key === 'MALE' ? 'He' : 'She'} can be yours for $${pet.price}`
             }
           />          
         </Card>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Menu, Icon, Pagination, Button } from 'antd';
+import { Layout, Menu, Icon, Pagination, Button, Switch } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 
 import { API_KEY } from './config';
@@ -16,12 +16,14 @@ const App: React.FC = () => {
   const [loaded, setLoaded] = useState(false);
   const [access_key, setAccessKey] = useState("");
   
-  const [gender, setGender] = useState("FEMALE");
-  const [size, setSize] = useState("M");
-  const [age, setAge] = useState("SENIOR");
+  const [gender, setGender] = useState("MALE");
+  const [size, setSize] = useState("");
+  const [age, setAge] = useState("");
   const [data, setData] = useState<Array<any> | null>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [count, setCount] = useState(1);
+  const [sort, setSort] = useState('name');
+  const [order, setOrder] = useState(""); // '-' for DESC & '' for ASC
 
   useEffect(() => {
     const storedAccessKey: string | null = localStorage.getItem("access_key");
@@ -54,12 +56,12 @@ const App: React.FC = () => {
   useEffect(() => {
     if (loaded) {
       (async () => {
-        const resp = await findPets({access_key, gender, size, age, currentPage});
+        const resp = await findPets(access_key, gender, size, age, currentPage, [order + sort]);
         setData(resp.result);
         setCount(resp.count);
       })();
     }
-  }, [access_key, gender, size, age, currentPage]);
+  }, [access_key, gender, size, age, currentPage, order, sort]);
 
   return (
     <div className="App">
@@ -74,7 +76,7 @@ const App: React.FC = () => {
           <Menu
             theme="dark"
             mode="inline"
-            defaultSelectedKeys={["2", "4", "10"]}
+            defaultSelectedKeys={["2", "4", "10", "11"]}
           >
             <SubMenu
               key="gender"
@@ -139,17 +141,52 @@ const App: React.FC = () => {
                 Senior
               </Menu.Item>
             </SubMenu>
+
+            <SubMenu
+              key="sort"
+              title={
+                <span>
+                  <Icon type="retweet"/>
+                  <span>Sort by</span>
+                </span>
+              }
+            >
+              <Menu.Item key="11" onClick={() => setSort("name")}>
+                Name
+              </Menu.Item>
+              <Menu.Item key="12" onClick={() => setSort("specie.name")}>
+                Specie Name
+              </Menu.Item>
+              <Menu.Item key="13" onClick={() => setSort("sex_key")}>
+                Gender
+              </Menu.Item>
+              <Menu.Item key="14" onClick={() => setSort("size_key")}>
+                Size
+              </Menu.Item>
+              <Menu.Item key="15" onClick={() => setSort("age_key")}>
+                Age
+              </Menu.Item>
+            </SubMenu>
+            <Menu.Item key="16">
+              <span>Order: &nbsp;</span>
+              <Switch 
+                checkedChildren={<Icon type="arrow-up"/>} 
+                unCheckedChildren={<Icon type="arrow-down"/>} 
+                defaultChecked
+                onClick={(checked) => setOrder(checked ? '' : '-')}
+              />
+            </Menu.Item>
           </Menu>
         </Sider>
-
-        <Button type="primary" onClick={() => setCollapsed(!collapsed)} className="collapse-btn">
-          <Icon type={collapsed ? 'menu-unfold' : 'menu-fold'} />
-        </Button>
-
         <Layout style={{ marginLeft: 200 }}>
           <Header className="app-header align-text-center">
             Pet Search
           </Header>
+          <Content style={{ height: "0"}}>
+            <Button type="primary" onClick={() => setCollapsed(!collapsed)} className="collapse-btn">
+              <Icon type={collapsed ? 'menu-unfold' : 'menu-fold'} />
+            </Button>
+          </Content>
           <Content className="app-content">
             <CardsList data={data} />
           </Content>

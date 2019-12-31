@@ -4,8 +4,12 @@ import { headersConfig } from "./Types";
 import Axios from "axios";
 
 export async function findPets(
-    { access_key, gender, size, age, currentPage }: 
-    { access_key: string; gender: string; size: string; age: string; currentPage: number; }
+    access_key: string,
+    gender: string,
+    size: string,
+    age: string,
+    currentPage: number,
+    sort: string[] 
     ): Promise<any> {
     const searchUrl = API_BASE_URL + PET_SEARCH;
     const requestHeader: headersConfig = {
@@ -14,9 +18,9 @@ export async function findPets(
 
     const request = {
       "search": {
-        sex_key: gender,
-        size_key: size,
-        age_key: age,
+        ...gender && {sex_key: gender},
+        ...size && {size_key: size},
+        ...age && {age_key: age},
         "_fields": [
           "id",
           "uuid",
@@ -53,8 +57,9 @@ export async function findPets(
       "options": {
         "page": currentPage,
         "limit": 5,
-        "sort": []
+        "sort": sort
       }
     };
+
     return (await Axios.post(searchUrl, request, requestHeader)).data.data;
   }
