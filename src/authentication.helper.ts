@@ -23,7 +23,7 @@ export async function authenticate(apiKey: string): Promise<string | null> {
 export async function requestSession(apiKey: string): Promise<string> {
     const url = API_BASE_URL + SESSION_REQUEST;
     const response = await Axios.post(url, { system_api_key: apiKey });
-    return response.data.data.access_key;
+    return response.data?.data?.access_key;
   }
 
 export async function registerSession(tempKey: string): Promise<string> {
@@ -39,5 +39,5 @@ export async function registerSession(tempKey: string): Promise<string> {
     };
 
     const response = await Axios.post(url, userAuth, requestHeader);
-    return response.data.data.access_key;
+    return response.data?.data?.access_key;
   }
