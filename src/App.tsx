@@ -63,6 +63,7 @@ const App: React.FC = () => {
         }
         setData(resp.result);
         setCount(resp.count);
+        setError("");
       })();
     }
   }, [access_key, gender, size, age, currentPage, order, sort]);
