@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React from 'react';
 import { render } from '@testing-library/react';
 import App from './App';
@@ -12,3 +14,15 @@ test('renders pet search title', () => {
   const linkElement = getByText(/Pet Search/i);
   expect(linkElement).toBeInTheDocument();
 });
+
+test('adds api_key to localStorage', () => {
+    localStorage.clear();
+
+    expect(localStorage.length).toBe(0);
+    
+    localStorage.setItem("api_key", "TEST");
+
+    expect(localStorage.length).toEqual(1);
+    expect(localStorage.getItem("api_key")).toEqual("TEST");
+});
+ 
