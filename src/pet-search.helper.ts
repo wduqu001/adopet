@@ -60,6 +60,10 @@ export async function findPets(
         "sort": sort
       }
     };
-
-    return (await Axios.post(searchUrl, request, requestHeader)).data.data;
+    try {
+      const response = await Axios.post(searchUrl, request, requestHeader);
+      return response.data?.data;
+    } catch (error) {
+      return null;      
+    }
   }
