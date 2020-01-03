@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Layout, Menu, Icon, Pagination, Button, Switch } from 'antd';
+import { Layout, Menu, Icon, Pagination, Button, Switch, Alert } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 
 import { API_KEY } from './config';
@@ -16,7 +16,7 @@ const App: React.FC = () => {
   const [loaded, setLoaded] = useState(false);
   const [access_key, setAccessKey] = useState("");
   
-  const [gender, setGender] = useState("MALE");
+  const [gender, setGender] = useState("");
   const [size, setSize] = useState("");
   const [age, setAge] = useState("");
   const [data, setData] = useState<Array<any> | null>([]);
@@ -24,6 +24,7 @@ const App: React.FC = () => {
   const [count, setCount] = useState(1);
   const [sort, setSort] = useState('name');
   const [order, setOrder] = useState(""); // '-' for DESC & '' for ASC
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const storedAccessKey: string | null = localStorage.getItem("access_key");
@@ -35,17 +36,16 @@ const App: React.FC = () => {
     }
 
     if (!API_KEY) {
-      alert("API_KEY was not found. Please add a API_KEY to the config.ts file")
+      setError("API_KEY was not found. Please add a API_KEY to the config.ts file")
       return;
     }
 
     (async () => {
       const accessKey: string | null = await authenticate(API_KEY)
       if (!accessKey) {
-        alert("User authentication failed");
+        setError("User authentication failed");
         return;
       }
-
       setAccessKey(accessKey);
       localStorage.setItem("access_key", accessKey);
     })();
@@ -57,11 +57,23 @@ const App: React.FC = () => {
     if (loaded) {
       (async () => {
         const resp = await findPets(access_key, gender, size, age, currentPage, [order + sort]);
+        if(!resp) {
+          setError("There were some technical issues. Please try again later");
+          return;
+        }
         setData(resp.result);
         setCount(resp.count);
       })();
     }
   }, [access_key, gender, size, age, currentPage, order, sort]);
+
+  function clearFilters():void {
+    setGender('');
+    setSize(''); 
+    setAge(''); 
+    setSort('name'); 
+    setOrder('');
+  }
 
   return (
     <div className="App">
@@ -73,11 +85,12 @@ const App: React.FC = () => {
           collapsed={collapsed}
         >
           <div className="logo"/>
+          <div className="sider-settings-header"> Settings: </div>
           <Menu
             theme="dark"
             mode="inline"
-            defaultSelectedKeys={["2", "4", "10", "11"]}
-          >
+            defaultSelectedKeys={["11"]}
+            >
             <SubMenu
               key="gender"
               title={
@@ -87,7 +100,7 @@ const App: React.FC = () => {
                   <span>Gender</span>
                 </span>
               }
-            >
+              >
               <Menu.Item key="1" onClick={() => setGender("MALE")}>
                 Male
               </Menu.Item>
@@ -154,26 +167,27 @@ const App: React.FC = () => {
               <Menu.Item key="11" onClick={() => setSort("name")}>
                 Name
               </Menu.Item>
-              <Menu.Item key="12" onClick={() => setSort("specie.name")}>
-                Specie Name
-              </Menu.Item>
-              <Menu.Item key="13" onClick={() => setSort("sex_key")}>
+              <Menu.Item key="12" onClick={() => setSort("sex_key")}>
                 Gender
               </Menu.Item>
-              <Menu.Item key="14" onClick={() => setSort("size_key")}>
+              <Menu.Item key="13" onClick={() => setSort("size_key")}>
                 Size
               </Menu.Item>
-              <Menu.Item key="15" onClick={() => setSort("age_key")}>
+              <Menu.Item key="14" onClick={() => setSort("age_key")}>
                 Age
               </Menu.Item>
             </SubMenu>
+            <Menu.Item key="15" onClick={clearFilters}>
+              <Icon type="undo" />
+              Clear filters
+            </Menu.Item>
             <Menu.Item key="16">
               <span>Order: &nbsp;</span>
               <Switch 
                 checkedChildren={<Icon type="arrow-up"/>} 
                 unCheckedChildren={<Icon type="arrow-down"/>} 
                 defaultChecked
-                onClick={(checked) => setOrder(checked ? '' : '-')}
+                onClick={(checked:boolean) => setOrder(checked ? '' : '-')}
               />
             </Menu.Item>
           </Menu>
@@ -182,12 +196,18 @@ const App: React.FC = () => {
           <Header className="app-header align-text-center">
             Pet Search
           </Header>
+          {
+            error ? 
+            <Alert message={error} type="error" closable showIcon />
+            : ""
+          }
           <Content style={{ height: "0"}}>
             <Button type="primary" onClick={() => setCollapsed(!collapsed)} className="collapse-btn">
               <Icon type={collapsed ? 'menu-unfold' : 'menu-fold'} />
             </Button>
           </Content>
           <Content className="app-content">
+
             <CardsList data={data} />
           </Content>
           <Content
@@ -197,7 +217,7 @@ const App: React.FC = () => {
             <Pagination
               defaultCurrent={1}
               defaultPageSize={5}
-              onChange={e => setCurrentPage(e)}
+              onChange={(pageNumber:number) => setCurrentPage(pageNumber)}
               total={count}
             />
           </Content>

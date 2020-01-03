@@ -11,6 +11,13 @@
   left: 0;
 }
 
+.sider-settings-header {
+  font-weight: 600;
+  font-size: 16px;
+  margin: 12px 0 0 12px;
+  color: #fff;
+}
+
 .app-content {
   margin: 24px 16px 0;
 }
