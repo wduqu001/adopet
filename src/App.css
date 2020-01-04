@@ -29,7 +29,7 @@
 }
 
 .logo {
-  margin: 36px 24px 24px;
+  margin: 36px auto;
   width: 130px;
   height: 102px;
   pointer-events: none;
