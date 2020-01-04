@@ -2,17 +2,18 @@
 
 import React from 'react';
 import { render } from '@testing-library/react';
+
 import App from './App';
-import Axios from 'axios';
-import { API_BASE_URL, SESSION_REQUEST } from './config';
-import { requestSession } from './authentication.helper';
 
 jest.mock('axios');
 
-test('renders pet search title', () => {
-  const { getByText } = render(<App />);
-  const linkElement = getByText(/Pet Search/i);
-  expect(linkElement).toBeInTheDocument();
+test('renders pet search layout', () => {
+  const { getByText, getAllByRole } = render(<App />);
+  const header = getByText(/Pet Search/i);
+  const settings = getAllByRole(/menuitem/i);
+
+  expect(header).toBeInTheDocument();
+  expect(settings.length).toEqual(6);
 });
 
 test('adds api_key to localStorage', () => {
@@ -25,4 +26,3 @@ test('adds api_key to localStorage', () => {
     expect(localStorage.length).toEqual(1);
     expect(localStorage.getItem("api_key")).toEqual("TEST");
 });
- 
